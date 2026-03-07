@@ -26,13 +26,13 @@ function SidebarLeft({ activeTab }) {
   }
 
   const handleImportClick = async () => {
-    // РЎРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј File System Access API
+    // Сначала пробуем File System Access API
     const data = await openJSONFile()
     if (data) {
       await doImport(data)
       return
     }
-    // Fallback: РѕР±С‹С‡РЅС‹Р№ <input>
+    // Fallback: обычный <input>
     importInputRef.current?.click()
   }
 
@@ -46,12 +46,12 @@ function SidebarLeft({ activeTab }) {
           const data = JSON.parse(ev.target.result)
           await doImport(data)
         } catch (err) {
-          alert('РћС€РёР±РєР° РёРјРїРѕСЂС‚Р°: ' + err.message)
+          alert('Ошибка импорта: ' + err.message)
         }
       }
       reader.readAsText(file)
     } catch (err) {
-      alert('РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р°: ' + err.message)
+      alert('Ошибка чтения файла: ' + err.message)
     }
     e.target.value = ''
   }
@@ -59,39 +59,39 @@ function SidebarLeft({ activeTab }) {
   const doImport = async (data) => {
     if (!currentUser) return
     if (!Array.isArray(data.tasks) || !Array.isArray(data.projects)) {
-      alert('РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ С„Р°Р№Р»Р°')
+      alert('Неверный формат файла')
       return
     }
     try {
       await importFromData(currentUser.uid, data)
-      alert('РРјРїРѕСЂС‚ РІС‹РїРѕР»РЅРµРЅ СѓСЃРїРµС€РЅРѕ!')
+      alert('Импорт выполнен успешно!')
     } catch (err) {
-      alert('РћС€РёР±РєР° РёРјРїРѕСЂС‚Р°: ' + err.message)
+      alert('Ошибка импорта: ' + err.message)
     }
   }
 
   return (
     <aside className="sidebar-left">
       <div className="sidebar-left__topbar">
-        <span className="sidebar-left__app-name">рџ““ Tasks App</span>
+        <span className="sidebar-left__app-name">📓 Tasks App</span>
         <div className="sidebar-left__topbar-right">
           <div className="sidebar-left__view-tabs">
             <button
               className={`sidebar-left__view-tab ${view === 'main' ? 'sidebar-left__view-tab--active' : ''}`}
               onClick={() => setView('main')}
-              title="РџСЂРѕРµРєС‚С‹"
-            >рџ“Ѓ</button>
+              title="Проекты"
+            >📁</button>
             <button
               className={`sidebar-left__view-tab ${view === 'stats' ? 'sidebar-left__view-tab--active' : ''}`}
               onClick={() => setView('stats')}
-              title="РЎС‚Р°С‚РёСЃС‚РёРєР°"
-            >рџ“Љ</button>
+              title="Статистика"
+            >📊</button>
           </div>
           <ThemeToggle />
         </div>
       </div>
 
-      {/* РЎРєСЂС‹С‚С‹Р№ input РґР»СЏ Safari/Firefox fallback */}
+      {/* Скрытый input для Safari/Firefox fallback */}
       <input
         ref={importInputRef}
         type="file"
@@ -122,7 +122,7 @@ function SidebarLeft({ activeTab }) {
         </>
       )}
 
-      {/* РџРѕРєР°Р·С‹РІР°РµРј Р°РєРєР°СѓРЅС‚ С‚РѕР»СЊРєРѕ РІ РґРµСЃРєС‚РѕРїРЅРѕР№ РІРµСЂСЃРёРё */}
+      {/* Показываем аккаунт только в десктопной версии */}
       {!activeTab && <UserBadge variant="sidebar" />}
     </aside>
   )

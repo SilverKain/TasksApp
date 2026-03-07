@@ -4,10 +4,10 @@ import { getProjectPathString } from '../../utils/projectUtils'
 import './Stats.css'
 
 const SECTIONS = [
-  { id: 'projects', label: 'роекты', emoji: '📁' },
-  { id: 'subprojects', label: 'одпроекты', emoji: '📂' },
-  { id: 'tasks', label: 'адачи', emoji: '✅' },
-  { id: 'notes', label: 'аметки', emoji: '📄' },
+  { id: 'projects', label: 'Проекты', emoji: '📁' },
+  { id: 'subprojects', label: 'Подпроекты', emoji: '📂' },
+  { id: 'tasks', label: 'Задачи', emoji: '✅' },
+  { id: 'notes', label: 'Заметки', emoji: '📄' },
 ]
 
 export default function Stats({ onImport, onExport }) {
@@ -50,11 +50,11 @@ export default function Stats({ onImport, onExport }) {
       <div className="stats__header">
         <span className="stats__title">Статистика</span>
         <div className="stats__io">
-          <button className="stats__io-btn" onClick={onExport} title="кспортировать в JSON">
-            ⬆ кспорт
+          <button className="stats__io-btn" onClick={onExport} title="Экспортировать в JSON">
+            ⬆ Экспорт
           </button>
-          <button className="stats__io-btn" onClick={onImport} title="мпортировать из JSON">
-            ⬇ мпорт
+          <button className="stats__io-btn" onClick={onImport} title="Импортировать из JSON">
+            ⬇ Импорт
           </button>
         </div>
       </div>
@@ -77,20 +77,20 @@ export default function Stats({ onImport, onExport }) {
               onClick={() => toggle(sec.id)}
             >
               <span>{sec.emoji} {sec.label} ({counts[sec.id]})</span>
-              <span className="stats__chevron">{expanded === sec.id ? 'v' : '>'}</span>
+              <span className="stats__chevron">{expanded === sec.id ? '▾' : '▸'}</span>
             </button>
             {expanded === sec.id && (
               <ul className="stats__list">
                 {items[sec.id].length === 0 ? (
-                  <li className="stats__list-empty">ет элементов</li>
+                  <li className="stats__list-empty">Нет элементов</li>
                 ) : items[sec.id].map(item => (
                   <li key={item.id} className="stats__list-item">
                     <button
                       className="stats__item-btn"
                       onClick={() => handleItemClick(item, sec.id)}
-                      title="ткрыть"
+                      title="Открыть"
                     >
-                      <span className="stats__item-name">{item.title || 'ез названия'}</span>
+                      <span className="stats__item-name">{item.title || 'Без названия'}</span>
                       <ProjectPath item={item} projects={projects} section={sec.id} />
                     </button>
                   </li>
