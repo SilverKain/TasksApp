@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './Layout.css'
 import SidebarLeft from '../SidebarLeft/SidebarLeft'
 import CenterPanel from '../CenterPanel/CenterPanel'
 import SidebarRight from '../SidebarRight/SidebarRight'
+import UserBadge from '../Auth/UserBadge'
+import { useTaskContext } from '../../context/TaskContext'
 
 const TABS = [
   { id: 'projects', label: 'Проекты', icon: '📁' },
@@ -13,7 +15,7 @@ const TABS = [
 ]
 
 function Layout() {
-  const [mobileTab, setMobileTab] = useState('today')
+  const { mobileTab, setMobileTab } = useTaskContext()
 
   return (
     <>
@@ -48,6 +50,9 @@ function Layout() {
               {tab.label}
             </button>
           ))}
+          <div className="mobile-tab-bar__user">
+            <UserBadge variant="mobile" />
+          </div>
         </nav>
       </div>
     </>

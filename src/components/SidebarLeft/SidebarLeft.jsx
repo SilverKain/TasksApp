@@ -3,6 +3,7 @@ import Projects from '../Projects/Projects'
 import TodayTasks from '../TodayTasks/TodayTasks'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import SearchBar from '../SearchBar/SearchBar'
+import UserBadge from '../Auth/UserBadge'
 import './SidebarLeft.css'
 
 function SidebarLeft({ activeTab }) {
@@ -32,6 +33,9 @@ function SidebarLeft({ activeTab }) {
           <TodayTasks />
         </div>
       )}
+
+      {/* Показываем аккаунт только в десктопной версии */}
+      {!activeTab && <UserBadge variant="sidebar" />}
     </aside>
   )
 }

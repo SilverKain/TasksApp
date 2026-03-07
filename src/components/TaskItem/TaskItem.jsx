@@ -4,7 +4,7 @@ import { formatDate, isOverdue, isToday } from '../../utils/dateUtils'
 import './TaskItem.css'
 
 function TaskItem({ task, showProject = false }) {
-  const { selectedTaskId, setSelectedTaskId, toggleTaskDone, projects } = useTaskContext()
+  const { selectedTaskId, setSelectedTaskId, toggleTaskDone, projects, setMobileTab } = useTaskContext()
 
   const isSelected = selectedTaskId === task.id
   const isNote = task.type === 'note'
@@ -20,6 +20,11 @@ function TaskItem({ task, showProject = false }) {
     toggleTaskDone(task.id)
   }
 
+  const handleDoubleClick = () => {
+    setSelectedTaskId(task.id)
+    setMobileTab('task')
+  }
+
   return (
     <div
       className={[
@@ -31,6 +36,7 @@ function TaskItem({ task, showProject = false }) {
         isNote ? 'task-item--note' : '',
       ].filter(Boolean).join(' ')}
       onClick={() => setSelectedTaskId(task.id)}
+      onDoubleClick={handleDoubleClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && setSelectedTaskId(task.id)}

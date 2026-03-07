@@ -12,6 +12,7 @@ export function TaskProvider({ children }) {
   const [newTaskId, setNewTaskId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterProjectId, setFilterProjectId] = useState(null)
+  const [mobileTab, setMobileTab] = useState('today')
 
   // Загрузка данных при старте
   useEffect(() => {
@@ -141,6 +142,8 @@ export function TaskProvider({ children }) {
         setSelectedTaskId,
         newTaskId,
         setNewTaskId,
+        mobileTab,
+        setMobileTab,
         todayTasks,
         overdueTasks,
         inboxTasks,
