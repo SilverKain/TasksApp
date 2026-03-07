@@ -14,16 +14,22 @@ const taskDoc   = (uid, id) => doc(db, 'users', uid, 'tasks', id)
 const projectDoc = (uid, id) => doc(db, 'users', uid, 'projects', id)
 
 /** Подписка на задачи пользователя в реальном времени */
-export function subscribeUserTasks(uid, callback) {
+export function subscribeUserTasks(uid, callback, onError) {
   return onSnapshot(tasksCol(uid), (snap) => {
     callback(snap.docs.map(d => d.data()))
+  }, (err) => {
+    console.error('subscribeUserTasks error:', err)
+    onError && onError(err)
   })
 }
 
 /** Подписка на проекты пользователя в реальном времени */
-export function subscribeUserProjects(uid, callback) {
+export function subscribeUserProjects(uid, callback, onError) {
   return onSnapshot(projsCol(uid), (snap) => {
     callback(snap.docs.map(d => d.data()))
+  }, (err) => {
+    console.error('subscribeUserProjects error:', err)
+    onError && onError(err)
   })
 }
 

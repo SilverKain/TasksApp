@@ -32,26 +32,48 @@ export function TaskProvider({ children }) {
     if (!uid) return
 
     setSyncLoading(true)
+
+    let tasksReady = false
+    let projectsReady = false
     let seeded = false
+
+    const checkReady = () => {
+      if (tasksReady && projectsReady) setSyncLoading(false)
+    }
+
+    // Таймаут — если Firestore не ответил за 10 сек, снимаем спиннер
+    const timeout = setTimeout(() => {
+      console.warn('Firestore sync timeout')
+      setSyncLoading(false)
+    }, 10000)
+
+    const handleError = () => {
+      setSyncLoading(false)
+      clearTimeout(timeout)
+    }
 
     const unsubTasks = subscribeUserTasks(uid, (remoteTasks) => {
       if (!seeded && remoteTasks.length === 0) {
-        // Первый вход — записываем seed-данные
+        // Первый вход — записываем seed-данные одним батчем
         seeded = true
-        seedUserData(uid, seedTasks, seedProjects)
+        seedUserData(uid, seedTasks, seedProjects).catch(console.error)
+        // Не ждём — snapshot придёт сам после записи
         return
       }
       seeded = true
       setTasks(remoteTasks)
-      setSyncLoading(false)
-    })
+      tasksReady = true
+      checkReady()
+    }, handleError)
 
     const unsubProjects = subscribeUserProjects(uid, (remoteProjects) => {
       setProjects(remoteProjects)
-      setSyncLoading(false)
-    })
+      projectsReady = true
+      checkReady()
+    }, handleError)
 
     return () => {
+      clearTimeout(timeout)
       unsubTasks()
       unsubProjects()
     }
