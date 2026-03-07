@@ -16,6 +16,46 @@
   flex-shrink: 0;
 }
 
+.sidebar-left__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-left__view-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--color-bg-input);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.sidebar-left__view-tab {
+  width: 26px;
+  height: 26px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.sidebar-left__view-tab:hover {
+  background: var(--color-bg-card-hover);
+  color: var(--color-text);
+}
+
+.sidebar-left__view-tab--active {
+  background: var(--color-bg-panel);
+  color: var(--color-accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
 .sidebar-left__app-name {
   font-size: 15px;
   font-weight: 700;

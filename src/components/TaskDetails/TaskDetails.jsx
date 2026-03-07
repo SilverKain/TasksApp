@@ -94,7 +94,9 @@ function TaskDetails() {
       <div className="task-details__topbar">
         <div className="task-details__breadcrumb">
           {isNote
-            ? <span className="task-details__breadcrumb-note">📄 Заметка</span>
+            ? projectPathStr
+              ? <span className="task-details__breadcrumb-project">📄 {projectPathStr}</span>
+              : <span className="task-details__breadcrumb-note">📄 Заметка</span>
             : projectPathStr
               ? <span className="task-details__breadcrumb-project">{projectPathStr}</span>
               : <span className="task-details__breadcrumb-empty">Без проекта</span>}

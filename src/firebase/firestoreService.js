@@ -60,3 +60,39 @@ export async function seedUserData(uid, tasks, projects) {
   projects.forEach(p => batch.set(projectDoc(uid, p.id), p))
   await batch.commit()
 }
+
+/** Экспорт всех данных пользователя в JSON-файл */
+export function exportToJSON(tasks, projects) {
+  const data = { tasks, projects, exportedAt: new Date().toISOString() }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `tasks-app-backup-${new Date().toISOString().slice(0, 10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Импорт данных из JSON-файла и запись в Firestore (перезаписывает текущие данные) */
+export async function importFromJSON(uid, file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        const data = JSON.parse(e.target.result)
+        if (!Array.isArray(data.tasks) || !Array.isArray(data.projects)) {
+          throw new Error('Неверный формат файла: ожидаются поля tasks и projects')
+        }
+        const batch = writeBatch(db)
+        data.tasks.forEach(t => batch.set(taskDoc(uid, t.id), t))
+        data.projects.forEach(p => batch.set(projectDoc(uid, p.id), p))
+        await batch.commit()
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    reader.onerror = () => reject(new Error('Ошибка чтения файла'))
+    reader.readAsText(file)
+  })
+}
