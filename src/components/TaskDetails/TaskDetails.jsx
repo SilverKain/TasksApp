@@ -158,12 +158,17 @@ function TaskDetails() {
       <div className="task-details__content">
         {/* Title */}
         {isEditing ? (
-          <input
-            className="task-details__title-input"
-            value={form.title}
-            onChange={e => handleField('title', e.target.value)}
-            placeholder={isNote ? 'Название заметки...' : 'Название задачи...'}
-          />
+          <div className="task-details__title-edit-wrap">
+            <label className="task-details__title-edit-label">
+              {isNote ? '📄 Название заметки' : '✅ Название задачи'}
+            </label>
+            <input
+              className="task-details__title-input"
+              value={form.title}
+              onChange={e => handleField('title', e.target.value)}
+              placeholder={isNote ? 'Название заметки...' : 'Название задачи...'}
+            />
+          </div>
         ) : (
           <h2 className={`task-details__title-view ${form.status === 'done' ? 'task-details__title-view--done' : ''}`}>
             {form.title || <span className="task-details__placeholder">{isNote ? 'Без названия' : 'Без названия'}</span>}
@@ -266,8 +271,8 @@ function TaskDetails() {
           </div>
         )}
 
-        {/* Date + Project — only for tasks, moved below notes */}
-        {!isNote && (
+        {/* Date + Project — for tasks; Project only — for notes */}
+        {!isNote ? (
           <div className="task-details__meta-row">
             <div className="task-details__field task-details__field--inline">
               <label className="task-details__label">📅 Дата</label>
@@ -285,6 +290,31 @@ function TaskDetails() {
               )}
             </div>
 
+            <div className="task-details__field task-details__field--inline">
+              <label className="task-details__label">📁 Проект</label>
+              {isEditing ? (
+                <select
+                  className="task-details__project-select"
+                  value={form.projectId || ''}
+                  onChange={e => handleField('projectId', e.target.value || null)}
+                >
+                  <option value="">— Без проекта —</option>
+                  {allProjectsSorted.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.parentId ? `  ↳ ${p.title}` : p.title}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className="task-details__meta-value">
+                  {projectPathStr ? projectPathStr : <span className="task-details__placeholder">Без проекта</span>}
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Для заметок — только выбор проекта */
+          <div className="task-details__meta-row">
             <div className="task-details__field task-details__field--inline">
               <label className="task-details__label">📁 Проект</label>
               {isEditing ? (

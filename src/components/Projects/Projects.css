@@ -253,3 +253,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Drag & drop */
+.project-node__header--drag-over {
+  background: rgba(79, 70, 229, 0.12) !important;
+  outline: 2px dashed var(--color-accent);
+  outline-offset: -2px;
+}

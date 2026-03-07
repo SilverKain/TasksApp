@@ -25,6 +25,11 @@ function TaskItem({ task, showProject = false }) {
     setMobileTab('task')
   }
 
+  const handleDragStart = (e) => {
+    e.dataTransfer.setData('taskId', task.id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
   return (
     <div
       className={[
@@ -37,6 +42,8 @@ function TaskItem({ task, showProject = false }) {
       ].filter(Boolean).join(' ')}
       onClick={() => setSelectedTaskId(task.id)}
       onDoubleClick={handleDoubleClick}
+      draggable
+      onDragStart={handleDragStart}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && setSelectedTaskId(task.id)}

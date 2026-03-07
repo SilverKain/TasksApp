@@ -181,6 +181,24 @@
 }
 
 /* Title */
+.task-details__title-edit-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  background: rgba(79, 70, 229, 0.07);
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius);
+}
+
+.task-details__title-edit-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
 .task-details__title-input {
   width: 100%;
   font-size: 22px;

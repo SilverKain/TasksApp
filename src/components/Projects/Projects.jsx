@@ -49,10 +49,11 @@ function ProjectMenu({ onAddTask, onAddNote, onAddChild, onRename, onDelete }) {
 }
 
 function ProjectNode({ project, allProjects, tasks, depth = 0 }) {
-  const { setSelectedTaskId, selectedTaskId, addProject, deleteProject, updateProject, setFilterProjectId, filterProjectId, addTask, setSelectedProjectId, selectedProjectId } = useTaskContext()
+  const { setSelectedTaskId, selectedTaskId, addProject, deleteProject, updateProject, updateTask, setFilterProjectId, filterProjectId, addTask, setSelectedProjectId, selectedProjectId } = useTaskContext()
   const [collapsed, setCollapsed] = useState(false)
   const [editingTitle, setEditingTitle] = useState(project.title === '')
   const [titleValue, setTitleValue] = useState(project.title)
+  const [isDragOver, setIsDragOver] = useState(false)
 
   const children = allProjects.filter(p => p.parentId === project.id)
   const projectTasks = tasks.filter(t => t.projectId === project.id)
@@ -73,10 +74,22 @@ function ProjectNode({ project, allProjects, tasks, depth = 0 }) {
   return (
     <div className="project-node" style={{ paddingLeft: depth * 16 + 'px' }}>
       <div
-        className={`project-node__header ${isActive ? 'project-node__header--active' : ''}`}
+        className={[
+          'project-node__header',
+          isActive ? 'project-node__header--active' : '',
+          isDragOver ? 'project-node__header--drag-over' : '',
+        ].filter(Boolean).join(' ')}
         onClick={() => {
           setSelectedProjectId(selectedProjectId === project.id ? null : project.id)
           setFilterProjectId(project.id)
+        }}
+        onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setIsDragOver(true) }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={e => {
+          e.preventDefault()
+          setIsDragOver(false)
+          const taskId = e.dataTransfer.getData('taskId')
+          if (taskId) updateTask(taskId, { projectId: project.id })
         }}
       >
         <button
