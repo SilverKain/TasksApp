@@ -1,0 +1,50 @@
+{
+  "hash": "cb6d30cd",
+  "browserHash": "352b86a7",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "1152b701",
+      "needsInterop": true
+    },
+    "react-dom": {
+      "src": "../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "e7f1f670",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "6709b9fd",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "ad161b01",
+      "needsInterop": true
+    },
+    "react-calendar": {
+      "src": "../../node_modules/react-calendar/dist/esm/index.js",
+      "file": "react-calendar.js",
+      "fileHash": "f481a6f9",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "d66c61bf",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-TAMLLQRQ": {
+      "file": "chunk-TAMLLQRQ.js"
+    },
+    "chunk-Q34MU4L5": {
+      "file": "chunk-Q34MU4L5.js"
+    }
+  }
+}

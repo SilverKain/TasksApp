@@ -1,0 +1,29 @@
+.sidebar-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-panel);
+  border-left: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.sidebar-right__divider {
+  height: 1px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+.sidebar-right__section {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-right__section--half {
+  flex: 1;
+}
+
+.sidebar-right__section--full {
+  flex: 1;
+}

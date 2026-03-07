@@ -1,0 +1,76 @@
+.today-tasks {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.today-tasks__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  flex-shrink: 0;
+}
+
+.today-tasks__heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.today-tasks__count {
+  font-size: 11px;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-weight: 600;
+}
+
+.today-tasks__section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 4px;
+}
+
+.today-tasks__section-label {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  margin: 4px 0;
+}
+
+.today-tasks__section-label--overdue {
+  color: var(--color-overdue-text);
+  background: var(--color-overdue);
+}
+
+.today-tasks__empty {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 16px;
+}
+
+.today-tasks__add-form {
+  padding: 8px 10px;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.today-tasks__add-input {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-input);
+  transition: border-color var(--transition);
+}
+
+.today-tasks__add-input:focus {
+  border-color: var(--color-accent);
+}

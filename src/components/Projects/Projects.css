@@ -1,0 +1,255 @@
+.projects {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.projects__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  flex-shrink: 0;
+}
+
+.projects__heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.projects__add-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  transition: background var(--transition), color var(--transition);
+}
+
+.projects__add-btn:hover {
+  background: var(--color-bg-card-hover);
+  color: var(--color-accent);
+}
+
+.projects__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 4px 8px;
+}
+
+.projects__empty {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 16px;
+  line-height: 1.6;
+}
+
+/* ---- Project dropdown menu ---- */
+.project-menu {
+  position: relative;
+  flex-shrink: 0;
+  display: none;
+}
+
+.project-node__header:hover .project-menu,
+.project-node__header--active .project-menu {
+  display: block;
+}
+
+.project-menu__trigger {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.project-menu__trigger:hover {
+  background: var(--color-bg-input);
+  color: var(--color-text);
+}
+
+.project-menu__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 200;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  min-width: 180px;
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-menu__dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--color-text);
+  text-align: left;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.project-menu__dropdown button span {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.project-menu__dropdown button:hover {
+  background: var(--color-bg-card-hover);
+}
+
+.project-menu__danger {
+  color: var(--color-danger) !important;
+}
+
+.project-menu__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 4px 0;
+}
+
+/* ---- Project node ---- */
+.project-node {
+  user-select: none;
+}
+
+.project-node__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px 5px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.project-node__header:hover {
+  background: var(--color-bg-card-hover);
+}
+
+.project-node__header--active {
+  background: var(--color-bg-selected);
+}
+
+.project-node__toggle {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.project-node__title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-node__input {
+  flex: 1;
+  padding: 0 4px;
+  font-size: 13px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+}
+
+.project-node__count {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  min-width: 16px;
+  text-align: right;
+}
+
+/* .project-node__children - children are indented via inline style */
+
+/* Project task row */
+.project-task {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.project-task:hover {
+  background: var(--color-bg-card-hover);
+}
+
+.project-task--selected {
+  background: var(--color-bg-selected);
+}
+
+.project-task--done .project-task__title {
+  text-decoration: line-through;
+  color: var(--color-done-text);
+}
+
+.project-task__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.project-task__dot--todo {
+  border: 2px solid var(--color-border);
+}
+
+.project-task__dot--in-progress {
+  background: var(--color-accent);
+}
+
+.project-task__dot--done {
+  background: var(--color-success);
+}
+
+.project-task__note-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+  width: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.project-task--note .project-task__title {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.project-task__title {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
