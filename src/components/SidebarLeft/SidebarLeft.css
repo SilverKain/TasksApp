@@ -62,16 +62,65 @@
   color: var(--color-text);
 }
 
+.sidebar-left__archive-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  border: none;
+  background: none;
+  flex-shrink: 0;
+}
+
+.sidebar-left__archive-btn:hover {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-success);
+}
+
 .sidebar-left__divider {
   height: 1px;
   background: var(--color-border);
   flex-shrink: 0;
 }
 
+.sidebar-left__divider--resizable {
+  height: 5px;
+  background: transparent;
+  cursor: row-resize;
+  flex-shrink: 0;
+  position: relative;
+  transition: background var(--transition);
+}
+
+.sidebar-left__divider--resizable::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 2px;
+  height: 1px;
+  background: var(--color-border);
+  transition: background var(--transition);
+}
+
+.sidebar-left__divider--resizable:hover::after,
+.sidebar-left__divider--resizable:active::after {
+  background: var(--color-accent);
+  height: 2px;
+  top: 1.5px;
+}
+
 .sidebar-left__section {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .sidebar-left__section--half {

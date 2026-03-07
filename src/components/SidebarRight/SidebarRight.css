@@ -13,6 +13,33 @@
   flex-shrink: 0;
 }
 
+.sidebar-right__divider--resizable {
+  height: 5px;
+  background: transparent;
+  cursor: row-resize;
+  flex-shrink: 0;
+  position: relative;
+  transition: background var(--transition);
+}
+
+.sidebar-right__divider--resizable::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 2px;
+  height: 1px;
+  background: var(--color-border);
+  transition: background var(--transition);
+}
+
+.sidebar-right__divider--resizable:hover::after,
+.sidebar-right__divider--resizable:active::after {
+  background: var(--color-accent);
+  height: 2px;
+  top: 1.5px;
+}
+
 .sidebar-right__section {
   overflow: hidden;
   display: flex;

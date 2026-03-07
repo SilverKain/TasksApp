@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react'
+﻿import React, { useState, useRef, useCallback } from 'react'
 import Projects from '../Projects/Projects'
 import TodayTasks from '../TodayTasks/TodayTasks'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
@@ -12,7 +12,9 @@ import './SidebarLeft.css'
 
 function SidebarLeft({ activeTab }) {
   const [view, setView] = useState('main') // 'main' | 'stats'
+  const [splitPct, setSplitPct] = useState(50)
   const importInputRef = useRef(null)
+  const sidebarRef = useRef(null)
   const { tasks, projects, archiveCompleted } = useTaskContext()
   const { currentUser } = useAuth()
 
@@ -70,8 +72,35 @@ function SidebarLeft({ activeTab }) {
     }
   }
 
+  const handleDividerMouseDown = useCallback((e) => {
+    e.preventDefault()
+    const sidebar = sidebarRef.current
+    if (!sidebar) return
+    const onMouseMove = (ev) => {
+      const rect = sidebar.getBoundingClientRect()
+      const topbarEl = sidebar.querySelector('.sidebar-left__topbar')
+      const badgeEl = sidebar.querySelector('.user-badge--sidebar')
+      const topbarH = topbarEl ? topbarEl.offsetHeight : 50
+      const badgeH = badgeEl ? badgeEl.offsetHeight : 48
+      const contentH = rect.height - topbarH - badgeH - 1
+      const relY = ev.clientY - rect.top - topbarH
+      const pct = Math.min(Math.max((relY / contentH) * 100, 10), 90)
+      setSplitPct(pct)
+    }
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+    document.body.style.cursor = 'row-resize'
+    document.body.style.userSelect = 'none'
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }, [])
+
   return (
-    <aside className="sidebar-left">
+    <aside className="sidebar-left" ref={sidebarRef}>
       <div className="sidebar-left__topbar">
         <span className="sidebar-left__app-name">📓 Tasks App</span>
         <div className="sidebar-left__topbar-right">
@@ -87,6 +116,11 @@ function SidebarLeft({ activeTab }) {
               title="Статистика"
             >📊</button>
           </div>
+          <button
+            className="sidebar-left__archive-btn"
+            onClick={archiveCompleted}
+            title="Переместить выполненные в архив"
+          >📦</button>
           <ThemeToggle />
         </div>
       </div>
@@ -107,15 +141,26 @@ function SidebarLeft({ activeTab }) {
       ) : (
         <>
           {showProjects && (
-            <div className={`sidebar-left__section sidebar-left__section--projects ${showToday ? 'sidebar-left__section--half' : 'sidebar-left__section--full'}`}>
+            <div
+              className="sidebar-left__section"
+              style={showProjects && showToday ? { flexGrow: splitPct, flexShrink: 1, flexBasis: 0 } : { flex: 1 }}
+            >
               <Projects />
             </div>
           )}
 
-          {!activeTab && <div className="sidebar-left__divider" />}
+          {!activeTab && showProjects && showToday && (
+            <div
+              className="sidebar-left__divider sidebar-left__divider--resizable"
+              onMouseDown={handleDividerMouseDown}
+            />
+          )}
 
           {showToday && (
-            <div className={`sidebar-left__section sidebar-left__section--today ${showProjects ? 'sidebar-left__section--half' : 'sidebar-left__section--full'}`}>
+            <div
+              className="sidebar-left__section"
+              style={showProjects && showToday ? { flexGrow: 100 - splitPct, flexShrink: 1, flexBasis: 0 } : { flex: 1 }}
+            >
               <TodayTasks />
             </div>
           )}

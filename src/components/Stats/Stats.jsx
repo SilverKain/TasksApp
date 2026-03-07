@@ -11,7 +11,7 @@ const SECTIONS = [
   { id: 'archived', label: 'Выполненные', emoji: '📦' },
 ]
 
-export default function Stats({ onImport, onExport, onArchive }) {
+export default function Stats({ onImport, onExport }) {
   const { tasks, projects, setSelectedTaskId, setMobileTab, setSelectedProjectId } = useTaskContext()
   const [expanded, setExpanded] = useState(null)
 
@@ -59,9 +59,6 @@ export default function Stats({ onImport, onExport, onArchive }) {
           </button>
           <button className="stats__io-btn" onClick={onImport} title="Импортировать из JSON">
             ⬇ Импорт
-          </button>
-          <button className="stats__io-btn stats__io-btn--archive" onClick={onArchive} title="Переместить выполненные задачи в архив">
-            📦 В архив
           </button>
         </div>
       </div>
