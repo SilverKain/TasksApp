@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { useTaskContext } from '../../context/TaskContext'
 import { getProjectPathString } from '../../utils/projectUtils'
 import './Stats.css'
 
 const SECTIONS = [
-  { id: 'projects', label: 'Проекты', emoji: '📁' },
-  { id: 'subprojects', label: 'Подпроекты', emoji: '📂' },
-  { id: 'tasks', label: 'Задачи', emoji: '✅' },
-  { id: 'notes', label: 'Заметки', emoji: '📄' },
+  { id: 'projects', label: 'роекты', emoji: '📁' },
+  { id: 'subprojects', label: 'одпроекты', emoji: '📂' },
+  { id: 'tasks', label: 'адачи', emoji: '✅' },
+  { id: 'notes', label: 'аметки', emoji: '📄' },
 ]
 
 export default function Stats({ onImport, onExport }) {
-  const { tasks, projects, setSelectedTaskId, setMobileTab } = useTaskContext()
+  const { tasks, projects, setSelectedTaskId, setMobileTab, setSelectedProjectId } = useTaskContext()
   const [expanded, setExpanded] = useState(null)
 
   const rootProjects = projects.filter(p => !p.parentId)
@@ -33,9 +33,11 @@ export default function Stats({ onImport, onExport }) {
     notes: noteList,
   }
 
-  const handleItemClick = (item) => {
-    if (item.type !== undefined) {
-      // это задача / заметка
+  const handleItemClick = (item, sectionId) => {
+    if (sectionId === 'projects' || sectionId === 'subprojects') {
+      setSelectedProjectId(item.id)
+      setMobileTab('task')
+    } else {
       setSelectedTaskId(item.id)
       setMobileTab('task')
     }
@@ -48,13 +50,12 @@ export default function Stats({ onImport, onExport }) {
       <div className="stats__header">
         <span className="stats__title">Статистика</span>
         <div className="stats__io">
-          <button className="stats__io-btn" onClick={onExport} title="Экспортировать в JSON">
-            ⬆ Экспорт
+          <button className="stats__io-btn" onClick={onExport} title="кспортировать в JSON">
+            ⬆ кспорт
           </button>
-          <label className="stats__io-btn stats__io-btn--import" title="Импортировать из JSON">
-            ⬇ Импорт
-            <input type="file" accept=".json" onChange={onImport} style={{ display: 'none' }} />
-          </label>
+          <button className="stats__io-btn" onClick={onImport} title="мпортировать из JSON">
+            ⬇ мпорт
+          </button>
         </div>
       </div>
 
@@ -76,27 +77,22 @@ export default function Stats({ onImport, onExport }) {
               onClick={() => toggle(sec.id)}
             >
               <span>{sec.emoji} {sec.label} ({counts[sec.id]})</span>
-              <span className="stats__chevron">{expanded === sec.id ? '▾' : '▸'}</span>
+              <span className="stats__chevron">{expanded === sec.id ? 'v' : '>'}</span>
             </button>
             {expanded === sec.id && (
               <ul className="stats__list">
                 {items[sec.id].length === 0 ? (
-                  <li className="stats__list-empty">Нет элементов</li>
+                  <li className="stats__list-empty">ет элементов</li>
                 ) : items[sec.id].map(item => (
                   <li key={item.id} className="stats__list-item">
-                    {/* Проекты и подпроекты — не кликабельны как задачи */}
-                    {item.type !== undefined ? (
-                      <button
-                        className="stats__item-btn"
-                        onClick={() => handleItemClick(item)}
-                        title="Открыть"
-                      >
-                        <span className="stats__item-name">{item.title || 'Без названия'}</span>
-                        <ProjectPath item={item} projects={projects} />
-                      </button>
-                    ) : (
-                      <span className="stats__item-name">{item.title || 'Без названия'}</span>
-                    )}
+                    <button
+                      className="stats__item-btn"
+                      onClick={() => handleItemClick(item, sec.id)}
+                      title="ткрыть"
+                    >
+                      <span className="stats__item-name">{item.title || 'ез названия'}</span>
+                      <ProjectPath item={item} projects={projects} section={sec.id} />
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -108,9 +104,14 @@ export default function Stats({ onImport, onExport }) {
   )
 }
 
-function ProjectPath({ item, projects }) {
-  if (!item.projectId) return null
-  const path = getProjectPathString(item.projectId, projects)
-  if (!path) return null
-  return <span className="stats__item-path">{path}</span>
+function ProjectPath({ item, projects, section }) {
+  if (section === 'subprojects' && item.parentId) {
+    const parent = projects.find(p => p.id === item.parentId)
+    if (parent) return <span className="stats__item-path">{parent.title}</span>
+  }
+  if ((section === 'tasks' || section === 'notes') && item.projectId) {
+    const path = getProjectPathString(item.projectId, projects)
+    if (path) return <span className="stats__item-path">{path}</span>
+  }
+  return null
 }

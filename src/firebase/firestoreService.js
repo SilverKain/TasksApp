@@ -73,6 +73,17 @@ export function exportToJSON(tasks, projects) {
   URL.revokeObjectURL(url)
 }
 
+/** Импорт из уже распарсенного объекта { tasks, projects } в Firestore */
+export async function importFromData(uid, data) {
+  if (!Array.isArray(data.tasks) || !Array.isArray(data.projects)) {
+    throw new Error('Неверный формат: ожидаются поля tasks и projects')
+  }
+  const batch = writeBatch(db)
+  data.tasks.forEach(t => batch.set(taskDoc(uid, t.id), t))
+  data.projects.forEach(p => batch.set(projectDoc(uid, p.id), p))
+  await batch.commit()
+}
+
 /** Импорт данных из JSON-файла и запись в Firestore (перезаписывает текущие данные) */
 export async function importFromJSON(uid, file) {
   return new Promise((resolve, reject) => {

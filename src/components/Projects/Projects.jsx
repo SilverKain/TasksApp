@@ -49,14 +49,14 @@ function ProjectMenu({ onAddTask, onAddNote, onAddChild, onRename, onDelete }) {
 }
 
 function ProjectNode({ project, allProjects, tasks, depth = 0 }) {
-  const { setSelectedTaskId, selectedTaskId, addProject, deleteProject, updateProject, setFilterProjectId, filterProjectId, addTask } = useTaskContext()
+  const { setSelectedTaskId, selectedTaskId, addProject, deleteProject, updateProject, setFilterProjectId, filterProjectId, addTask, setSelectedProjectId, selectedProjectId } = useTaskContext()
   const [collapsed, setCollapsed] = useState(false)
   const [editingTitle, setEditingTitle] = useState(project.title === '')
   const [titleValue, setTitleValue] = useState(project.title)
 
   const children = allProjects.filter(p => p.parentId === project.id)
   const projectTasks = tasks.filter(t => t.projectId === project.id)
-  const isActive = filterProjectId === project.id
+  const isActive = filterProjectId === project.id || selectedProjectId === project.id
 
   const handleTitleBlur = () => {
     if (titleValue.trim()) {
@@ -75,7 +75,8 @@ function ProjectNode({ project, allProjects, tasks, depth = 0 }) {
       <div
         className={`project-node__header ${isActive ? 'project-node__header--active' : ''}`}
         onClick={() => {
-          setFilterProjectId(isActive ? null : project.id)
+          setSelectedProjectId(selectedProjectId === project.id ? null : project.id)
+          setFilterProjectId(project.id)
         }}
       >
         <button

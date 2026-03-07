@@ -21,11 +21,23 @@ export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([])
   const [projects, setProjects] = useState([])
   const [syncLoading, setSyncLoading] = useState(true)
-  const [selectedTaskId, setSelectedTaskId] = useState(null)
+  const [selectedTaskId, setSelectedTaskIdRaw] = useState(null)
+  const [selectedProjectId, setSelectedProjectIdRaw] = useState(null)
   const [newTaskId, setNewTaskId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterProjectId, setFilterProjectId] = useState(null)
   const [mobileTab, setMobileTab] = useState('today')
+
+  // Взаимное исключение: выбор задачи сбрасывает проект и наоборот
+  const setSelectedTaskId = useCallback((id) => {
+    setSelectedTaskIdRaw(id)
+    if (id) setSelectedProjectIdRaw(null)
+  }, [])
+
+  const setSelectedProjectId = useCallback((id) => {
+    setSelectedProjectIdRaw(id)
+    if (id) setSelectedTaskIdRaw(null)
+  }, [])
 
   // Подписываемся на Firestore в реальном времени
   useEffect(() => {
@@ -219,6 +231,8 @@ export function TaskProvider({ children }) {
         selectedTask,
         selectedTaskId,
         setSelectedTaskId,
+        selectedProjectId,
+        setSelectedProjectId,
         newTaskId,
         setNewTaskId,
         mobileTab,
