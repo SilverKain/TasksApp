@@ -127,6 +127,23 @@ export function TaskProvider({ children }) {
     })
   }, [uid])
 
+  const archiveCompleted = useCallback(() => {
+    setTasks(prev => {
+      const updated = prev.map(t =>
+        (t.type !== 'note' && t.status === 'done' && !t.archived)
+          ? { ...t, archived: true }
+          : t
+      )
+      if (uid) {
+        updated.forEach(t => {
+          const old = prev.find(p => p.id === t.id)
+          if (t.archived && !old?.archived) upsertTask(uid, t)
+        })
+      }
+      return updated
+    })
+  }, [uid])
+
   const deleteTask = useCallback((id) => {
     setTasks(prev => prev.filter(t => t.id !== id))
     setSelectedTaskId(prev => (prev === id ? null : prev))
@@ -202,6 +219,7 @@ export function TaskProvider({ children }) {
   const selectedTask = tasks.find(t => t.id === selectedTaskId) || null
 
   const filteredTasks = tasks.filter(t => {
+    if (t.archived) return false
     const matchSearch = searchQuery
       ? t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         t.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -213,14 +231,14 @@ export function TaskProvider({ children }) {
   const todayStr = localToday()
 
   const todayTasks = tasks.filter(
-    t => t.type !== 'note' && t.dueDate === todayStr && t.status !== 'done'
+    t => !t.archived && t.type !== 'note' && t.dueDate === todayStr && t.status !== 'done'
   )
 
   const overdueTasks = tasks.filter(
-    t => t.type !== 'note' && t.dueDate && t.dueDate < todayStr && t.status !== 'done'
+    t => !t.archived && t.type !== 'note' && t.dueDate && t.dueDate < todayStr && t.status !== 'done'
   )
 
-  const inboxTasks = tasks.filter(t => !t.projectId)
+  const inboxTasks = tasks.filter(t => !t.archived && !t.projectId)
 
   return (
     <TaskContext.Provider
@@ -248,6 +266,7 @@ export function TaskProvider({ children }) {
         addTask,
         updateTask,
         deleteTask,
+        archiveCompleted,
         toggleTaskDone,
         addProject,
         updateProject,

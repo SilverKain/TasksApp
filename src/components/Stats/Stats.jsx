@@ -8,22 +8,25 @@ const SECTIONS = [
   { id: 'subprojects', label: 'Подпроекты', emoji: '📂' },
   { id: 'tasks', label: 'Задачи', emoji: '✅' },
   { id: 'notes', label: 'Заметки', emoji: '📄' },
+  { id: 'archived', label: 'Выполненные', emoji: '📦' },
 ]
 
-export default function Stats({ onImport, onExport }) {
+export default function Stats({ onImport, onExport, onArchive }) {
   const { tasks, projects, setSelectedTaskId, setMobileTab, setSelectedProjectId } = useTaskContext()
   const [expanded, setExpanded] = useState(null)
 
   const rootProjects = projects.filter(p => !p.parentId)
   const subProjects = projects.filter(p => !!p.parentId)
-  const taskList = tasks.filter(t => t.type !== 'note')
-  const noteList = tasks.filter(t => t.type === 'note')
+  const taskList = tasks.filter(t => t.type !== 'note' && !t.archived)
+  const noteList = tasks.filter(t => t.type === 'note' && !t.archived)
+  const archivedList = tasks.filter(t => t.archived)
 
   const counts = {
     projects: rootProjects.length,
     subprojects: subProjects.length,
     tasks: taskList.length,
     notes: noteList.length,
+    archived: archivedList.length,
   }
 
   const items = {
@@ -31,6 +34,7 @@ export default function Stats({ onImport, onExport }) {
     subprojects: subProjects,
     tasks: taskList,
     notes: noteList,
+    archived: archivedList,
   }
 
   const handleItemClick = (item, sectionId) => {
@@ -55,6 +59,9 @@ export default function Stats({ onImport, onExport }) {
           </button>
           <button className="stats__io-btn" onClick={onImport} title="Импортировать из JSON">
             ⬇ Импорт
+          </button>
+          <button className="stats__io-btn stats__io-btn--archive" onClick={onArchive} title="Переместить выполненные задачи в архив">
+            📦 В архив
           </button>
         </div>
       </div>

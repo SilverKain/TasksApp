@@ -17,10 +17,9 @@ function CalendarWidget() {
     const dayTasks = getTasksForDate(tasks, date)
     if (dayTasks.length === 0) return null
     return (
-      <div className="calendar-widget__dot-row">
-        <span className="calendar-widget__dot" />
-        {dayTasks.length > 1 && <span className="calendar-widget__dot-count">{dayTasks.length}</span>}
-      </div>
+      <span className="calendar-widget__task-badge">
+        {dayTasks.length}
+      </span>
     )
   }
 

@@ -158,17 +158,12 @@ function TaskDetails() {
       <div className="task-details__content">
         {/* Title */}
         {isEditing ? (
-          <div className="task-details__title-edit-wrap">
-            <label className="task-details__title-edit-label">
-              {isNote ? '📄 Название заметки' : '✅ Название задачи'}
-            </label>
-            <input
-              className="task-details__title-input"
-              value={form.title}
-              onChange={e => handleField('title', e.target.value)}
-              placeholder={isNote ? 'Название заметки...' : 'Название задачи...'}
-            />
-          </div>
+          <input
+            className="task-details__title-input"
+            value={form.title}
+            onChange={e => handleField('title', e.target.value)}
+            placeholder={isNote ? 'Название заметки...' : 'Название задачи...'}
+          />
         ) : (
           <h2 className={`task-details__title-view ${form.status === 'done' ? 'task-details__title-view--done' : ''}`}>
             {form.title || <span className="task-details__placeholder">{isNote ? 'Без названия' : 'Без названия'}</span>}

@@ -156,6 +156,8 @@ function ProjectNode({ project, allProjects, tasks, depth = 0 }) {
               key={task.id}
               className={`project-task ${selectedTaskId === task.id ? 'project-task--selected' : ''} ${task.status === 'done' ? 'project-task--done' : ''} ${task.type === 'note' ? 'project-task--note' : ''}`}
               style={{ paddingLeft: (depth + 1) * 16 + 16 + 'px' }}
+              draggable
+              onDragStart={e => { e.stopPropagation(); e.dataTransfer.setData('taskId', task.id); e.dataTransfer.effectAllowed = 'move' }}
               onClick={(e) => { e.stopPropagation(); setSelectedTaskId(task.id) }}
             >
               {task.type === 'note'

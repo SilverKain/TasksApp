@@ -13,7 +13,7 @@ import './SidebarLeft.css'
 function SidebarLeft({ activeTab }) {
   const [view, setView] = useState('main') // 'main' | 'stats'
   const importInputRef = useRef(null)
-  const { tasks, projects } = useTaskContext()
+  const { tasks, projects, archiveCompleted } = useTaskContext()
   const { currentUser } = useAuth()
 
   const showProjects = !activeTab || activeTab === 'projects'
@@ -102,7 +102,7 @@ function SidebarLeft({ activeTab }) {
 
       {view === 'stats' ? (
         <div className="sidebar-left__section sidebar-left__section--full">
-          <Stats onExport={handleExport} onImport={handleImportClick} />
+          <Stats onExport={handleExport} onImport={handleImportClick} onArchive={archiveCompleted} />
         </div>
       ) : (
         <>

@@ -47,13 +47,24 @@
   color: var(--color-text);
 }
 
-/* Grid of 4 cards */
+.stats__io-btn--archive:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+/* Grid of N cards */
 .stats__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 8px 12px 12px;
   flex-shrink: 0;
+}
+
+/* 5-я карточка (архив) занимает всю ширину */
+.stats__card:last-child:nth-child(odd) {
+  grid-column: span 2;
 }
 
 .stats__card {
