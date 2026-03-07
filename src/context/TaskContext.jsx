@@ -1,39 +1,61 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { loadData, saveData } from '../services/storageService'
+import { useAuth } from './AuthContext'
+import {
+  subscribeUserTasks,
+  subscribeUserProjects,
+  upsertTask,
+  deleteTaskDoc,
+  upsertProject,
+  deleteProjectDoc,
+  seedUserData,
+} from '../firebase/firestoreService'
 import { seedTasks, seedProjects } from '../data/seedData'
 import { localToday } from '../utils/dateUtils'
 
 const TaskContext = createContext(null)
 
 export function TaskProvider({ children }) {
+  const { currentUser } = useAuth()
+  const uid = currentUser?.uid
+
   const [tasks, setTasks] = useState([])
   const [projects, setProjects] = useState([])
+  const [syncLoading, setSyncLoading] = useState(true)
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [newTaskId, setNewTaskId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterProjectId, setFilterProjectId] = useState(null)
   const [mobileTab, setMobileTab] = useState('today')
 
-  // Загрузка данных при старте
+  // Подписываемся на Firestore в реальном времени
   useEffect(() => {
-    const data = loadData()
-    if (data.tasks.length === 0 && data.projects.length === 0) {
-      // Первый запуск — загружаем тестовые данные
-      setTasks(seedTasks)
-      setProjects(seedProjects)
-      saveData({ tasks: seedTasks, projects: seedProjects })
-    } else {
-      setTasks(data.tasks)
-      setProjects(data.projects)
-    }
-  }, [])
+    if (!uid) return
 
-  // Автосохранение при изменении
-  useEffect(() => {
-    if (tasks.length > 0 || projects.length > 0) {
-      saveData({ tasks, projects })
+    setSyncLoading(true)
+    let seeded = false
+
+    const unsubTasks = subscribeUserTasks(uid, (remoteTasks) => {
+      if (!seeded && remoteTasks.length === 0) {
+        // Первый вход — записываем seed-данные
+        seeded = true
+        seedUserData(uid, seedTasks, seedProjects)
+        return
+      }
+      seeded = true
+      setTasks(remoteTasks)
+      setSyncLoading(false)
+    })
+
+    const unsubProjects = subscribeUserProjects(uid, (remoteProjects) => {
+      setProjects(remoteProjects)
+      setSyncLoading(false)
+    })
+
+    return () => {
+      unsubTasks()
+      unsubProjects()
     }
-  }, [tasks, projects])
+  }, [uid])
 
   // ---- Tasks CRUD ----
 
@@ -51,28 +73,44 @@ export function TaskProvider({ children }) {
       createdAt: new Date().toISOString(),
       ...taskData,
     }
+    // Оптимистичное обновление
     setTasks(prev => [...prev, task])
     setSelectedTaskId(task.id)
     setNewTaskId(task.id)
+    // Запись в Firestore
+    if (uid) upsertTask(uid, task)
     return task
-  }, [])
+  }, [uid])
 
   const updateTask = useCallback((id, changes) => {
-    setTasks(prev => prev.map(t => (t.id === id ? { ...t, ...changes } : t)))
-  }, [])
+    setTasks(prev => {
+      const updated = prev.map(t => (t.id === id ? { ...t, ...changes } : t))
+      if (uid) {
+        const task = updated.find(t => t.id === id)
+        if (task) upsertTask(uid, task)
+      }
+      return updated
+    })
+  }, [uid])
 
   const deleteTask = useCallback((id) => {
     setTasks(prev => prev.filter(t => t.id !== id))
     setSelectedTaskId(prev => (prev === id ? null : prev))
-  }, [])
+    if (uid) deleteTaskDoc(uid, id)
+  }, [uid])
 
   const toggleTaskDone = useCallback((id) => {
-    setTasks(prev =>
-      prev.map(t =>
+    setTasks(prev => {
+      const updated = prev.map(t =>
         t.id === id ? { ...t, status: t.status === 'done' ? 'todo' : 'done' } : t
       )
-    )
-  }, [])
+      if (uid) {
+        const task = updated.find(t => t.id === id)
+        if (task) upsertTask(uid, task)
+      }
+      return updated
+    })
+  }, [uid])
 
   // ---- Projects CRUD ----
 
@@ -84,27 +122,46 @@ export function TaskProvider({ children }) {
       ...data,
     }
     setProjects(prev => [...prev, project])
+    if (uid) upsertProject(uid, project)
     return project
-  }, [])
+  }, [uid])
 
   const updateProject = useCallback((id, changes) => {
-    setProjects(prev => prev.map(p => (p.id === id ? { ...p, ...changes } : p)))
-  }, [])
+    setProjects(prev => {
+      const updated = prev.map(p => (p.id === id ? { ...p, ...changes } : p))
+      if (uid) {
+        const project = updated.find(p => p.id === id)
+        if (project) upsertProject(uid, project)
+      }
+      return updated
+    })
+  }, [uid])
 
   const deleteProject = useCallback((id) => {
-    // Удаляем проект и все подпроекты
+    // Собираем все id для удаления (проект + подпроекты)
     const idsToDelete = new Set()
     const collectIds = (parentId) => {
       idsToDelete.add(parentId)
       projects.filter(p => p.parentId === parentId).forEach(p => collectIds(p.id))
     }
     collectIds(id)
+
     setProjects(prev => prev.filter(p => !idsToDelete.has(p.id)))
-    // Снимаем проект с задач
     setTasks(prev =>
-      prev.map(t => (idsToDelete.has(t.projectId) ? { ...t, projectId: null } : t))
+      prev.map(t => {
+        if (idsToDelete.has(t.projectId)) {
+          const updated = { ...t, projectId: null }
+          if (uid) upsertTask(uid, updated)
+          return updated
+        }
+        return t
+      })
     )
-  }, [projects])
+
+    if (uid) {
+      idsToDelete.forEach(pid => deleteProjectDoc(uid, pid))
+    }
+  }, [uid, projects])
 
   // ---- Computed ----
 
@@ -144,6 +201,7 @@ export function TaskProvider({ children }) {
         setNewTaskId,
         mobileTab,
         setMobileTab,
+        syncLoading,
         todayTasks,
         overdueTasks,
         inboxTasks,
